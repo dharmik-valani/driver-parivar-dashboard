@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12352c">
+  <title>Driver Parivar payments</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Driver Parivar</p>
+      <h1>Payments</h1>
+    </header>
+    <section class="filters" aria-label="Date range in India time">
+      <label>From
+        <input id="from" type="datetime-local" step="60" required>
+      </label>
+      <label>To
+        <input id="to" type="datetime-local" step="60" required>
+      </label>
+      <div class="chips">
+        <button type="button" id="d7">7 days</button>
+        <button type="button" id="d30">30 days</button>
+        <button type="button" id="dall">All</button>
+      </div>
+      <p id="window" class="hint">Loading…</p>
+    </section>
+    <section class="total" aria-live="polite">
+      <div>
+        <span>Purchases</span>
+        <strong id="count">–</strong>
+      </div>
+      <div>
+        <span>Amount</span>
+        <strong id="sum">–</strong>
+      </div>
+    </section>
+    <p id="users-line" class="hint users-line"></p>
+    <p id="empty" class="empty" hidden>No purchases in this window.</p>
+    <section id="rows" class="rows" aria-label="Purchases by role"></section>
+    <section class="play" aria-label="Play installs and uninstalls">
+      <h2>Play installs / uninstalls</h2>
+      <p class="status">Not connected yet.</p>
+      <p>A Play Console service account linked to this Firebase project is needed before install and uninstall numbers can be shown.</p>
+    </section>
+    <footer id="foot"></footer>
+  </main>
+  <script src="app.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
