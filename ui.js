@@ -6,8 +6,78 @@
   var live = null;
   var mode = "snapshot";
   var LIVE_URL = window.PAYMENT_AGGREGATES_URL || "";
+  var PLAY_URL = window.PLAY_METRICS_URL || "";
   var requestId = 0;
   var inputTimer = null;
+
+  function paintPlayMetrics(payload) {
+    var installsEl = document.getElementById("play-installs");
+    var uninstallsEl = document.getElementById("play-uninstalls");
+    var installsMeta = document.getElementById("play-installs-meta");
+    var payoutEl = document.getElementById("play-payout");
+    var payoutMeta = document.getElementById("play-payout-meta");
+    if (!installsEl || !payoutEl) return;
+
+    var installs = payload && payload.installs;
+    if (installs && installs.windowDays > 0) {
+      installsEl.textContent = P.formatCount(installs.installs || 0);
+      uninstallsEl.textContent = P.formatCount(installs.uninstalls || 0);
+      var active = installs.activeDeviceInstalls != null
+        ? P.formatCount(installs.activeDeviceInstalls) + " active device installs. "
+        : "";
+      installsMeta.textContent =
+        active +
+        "Last " + installs.windowDays + " report days (" +
+        (installs.fromDate || "?") + " to " + (installs.toDate || "?") +
+        "). Play Console, not Firestore.";
+    } else {
+      installsEl.textContent = "–";
+      uninstallsEl.textContent = "–";
+      installsMeta.textContent =
+        (installs && installs.error) ||
+        "Play install report is not available yet.";
+    }
+
+    var payout = payload && payload.payout;
+    if (payout && payout.available) {
+      payoutEl.textContent = P.formatInr(payout.amount || 0);
+      payoutMeta.textContent =
+        (payout.note || "Play Console earnings.") +
+        " Play Console, not Firestore.";
+    } else {
+      payoutEl.textContent = "–";
+      payoutMeta.textContent =
+        (payout && payout.note) ||
+        "Play payout report is not available.";
+    }
+  }
+
+  function loadPlayMetrics() {
+    if (!PLAY_URL) {
+      paintPlayMetrics({
+        installs: { windowDays: 0, error: "Play metrics URL is not configured." },
+        payout: { available: false, note: "Play metrics URL is not configured." }
+      });
+      return Promise.resolve();
+    }
+    return fetch(PLAY_URL).then(function (res) {
+      if (!res.ok) throw new Error("status " + res.status);
+      return res.json();
+    }).then(function (json) {
+      paintPlayMetrics(json);
+    }).catch(function (error) {
+      paintPlayMetrics({
+        installs: {
+          windowDays: 0,
+          error: "Could not load Play installs (" + (error && error.message) + ")."
+        },
+        payout: {
+          available: false,
+          note: "Could not load Play payout (" + (error && error.message) + ")."
+        }
+      });
+    });
+  }
 
   function setChip(id) {
     ["d7", "d30", "dall"].forEach(function (key) {
@@ -220,6 +290,8 @@
   }
   fromEl.addEventListener("input", onInput);
   toEl.addEventListener("input", onInput);
+
+  loadPlayMetrics();
 
   if (LIVE_URL) {
     var start = rangeFor(7);

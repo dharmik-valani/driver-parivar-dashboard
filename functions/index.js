@@ -1,5 +1,6 @@
 const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
+const { getPlayMetrics } = require("./playMetrics");
 
 admin.initializeApp();
 
@@ -165,5 +166,27 @@ exports.getPaymentAggregates = functions
     } catch (error) {
       console.error("getPaymentAggregates", error && error.message);
       return res.status(500).json({ error: "Could not load payment aggregates" });
+    }
+  });
+
+exports.getPlayMetrics = functions
+  .runWith({ memory: "256MB", timeoutSeconds: 60 })
+  .region("us-central1")
+  .https.onRequest(async (req, res) => {
+    setCorsHeaders(res);
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "GET") {
+      return res.status(405).json({ error: "Use GET" });
+    }
+
+    try {
+      const payload = await getPlayMetrics();
+      return res.status(200).json(payload);
+    } catch (error) {
+      console.error("getPlayMetrics", error && error.message, error && error.stack);
+      return res.status(500).json({
+        error: "Could not load Play Console metrics",
+        detail: error && error.message ? String(error.message) : "unknown",
+      });
     }
   });

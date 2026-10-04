@@ -40,15 +40,39 @@
     <p id="users-line" class="hint users-line"></p>
     <p id="empty" class="empty" hidden>No purchases in this window.</p>
     <section id="rows" class="rows" aria-label="Purchases by role"></section>
-    <section class="play" aria-label="Play installs and uninstalls">
-      <h2>Play installs / uninstalls</h2>
-      <p class="status">Not connected yet.</p>
-      <p>A Play Console service account linked to this Firebase project is needed before install and uninstall numbers can be shown.</p>
+    <section class="play-grid" aria-label="Play Console metrics">
+      <section class="play-card" aria-label="Play installs and uninstalls">
+        <p class="play-label">Play Console</p>
+        <h2>Installs / uninstalls</h2>
+        <div class="play-stats">
+          <div>
+            <span>Installs</span>
+            <strong id="play-installs">–</strong>
+          </div>
+          <div>
+            <span>Uninstalls</span>
+            <strong id="play-uninstalls">–</strong>
+          </div>
+        </div>
+        <p id="play-installs-meta" class="hint">Loading Play report…</p>
+      </section>
+      <section class="play-card" aria-label="Play payout">
+        <p class="play-label">Play Console</p>
+        <h2>Payout</h2>
+        <div class="play-stats single">
+          <div>
+            <span>Amount</span>
+            <strong id="play-payout">–</strong>
+          </div>
+        </div>
+        <p id="play-payout-meta" class="hint">Loading Play report…</p>
+      </section>
     </section>
     <footer id="foot"></footer>
   </main>
   <script>
     window.PAYMENT_AGGREGATES_URL = "https://us-central1-all-india-truck-driver-5b112.cloudfunctions.net/getPaymentAggregates";
+    window.PLAY_METRICS_URL = "https://us-central1-all-india-truck-driver-5b112.cloudfunctions.net/getPlayMetrics";
   </script>
   <script src="app.js"></script>
   <script src="ui.js"></script>

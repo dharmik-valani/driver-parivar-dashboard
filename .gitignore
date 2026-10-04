@@ -1,0 +1,13 @@
+play-metrics.json
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.vercel/
+.env
+.env.*
+*.log
+.DS_Store
+
+functions/.env
+functions/.env.*
+.vercel
